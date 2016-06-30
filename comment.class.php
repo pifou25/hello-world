@@ -3,25 +3,31 @@
 /*
  * formlaire pour poster des commentaires
  * contient : nom mail url et message
- *  étend formclass.php 
+ *  Ã©tend formclass.php 
  * ajoute un captcha simpliste :
  * "Ecrivez le chiffre 'cinq' ... en chiffre :"
  * ajouter une fonction antiflood dans la validation
  */
 class comment extends form {
 
-	private $captcha = array('zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf');
+	private $captcha = array('zÃ©ro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf');
 
 	// protection anti flood : ne pas poster plus de X messages par minute
 	protected $last_post;
 	protected $first_post;
 	protected $nb_posts;
 
-	
+	/**
+	 * le constructeur crÃ©e automatiquement  7 champs pour ce formulair:
+	 * nom email url question (texte)
+	 * texto (textarea)
+	 * submit (le bouton submit)
+	 * answer (hidden)
+	 * /
 	function __construct($cond = null) {
 	
 	
-		// liste des champs nécessaires - sauf token non crypté
+		// liste des champs nÃ©cessaires - sauf token non cryptÃ©
 		//$this->fields = array('nom', 'url', 'email', 'texto');
 		$this->fields['nom'] = array('type'=>'text', 'name'=>'nom', 'size'=>18, 'maxlength'=>20, 'value'=>'', 'label'=>array('txt'=>'Nom : '));
 		$this->fields['email'] = array('type'=>'text', 'name'=>'email', 'size'=>22, 'maxlength'=>40, 'value'=>'', 'label'=>array('txt'=>'Email : '));
@@ -43,7 +49,7 @@ class comment extends form {
 		$token = sha1(self::SALT.$now.self::SALT);
 		$signed = $now.'#'.$token;
 
-		// demander la question piège et ajouter la réponse
+		// demander la question piÃ¨ge et ajouter la rÃ©ponse
 		$answer = rand(0,9);
 		$this->fields['question']['label']['txt'] = 'Ecrivez le chiffre '. $this->captcha[$answer] . ' en chiffre :';
 		$this->fields['answer']['value'] = $this->captcha[$answer];
@@ -83,11 +89,11 @@ MYFORM;
 	
 		if (parent::validateForm()) {
 				
-			// tester la bonne réponse au captcha
+			// tester la bonne rÃ©ponse au captcha
 			if(!is_numeric($this->values['question']))
 			{
 				$this->valide = false;
-				$this->err = 'Question = "'.$this->values['question'] . '" pas numérique';
+				$this->err = 'Question = "'.$this->values['question'] . '" pas numÃ©rique';
 			}
 			else if (!isset($this->captcha[$this->values['question']]))
 			{
@@ -123,7 +129,7 @@ MYFORM;
 	
 	
 	
-	// fonction anti-flood : enregistrer en session les temps et nb de $_POST à chaque validation de formulaire
+	// fonction anti-flood : enregistrer en session les temps et nb de $_POST Ã  chaque validation de formulaire
 	function antiflood() {
 	
 		// protection anti flood : ne pas poster plus de X messages par minute
