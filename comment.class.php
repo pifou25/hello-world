@@ -23,7 +23,7 @@ class comment extends form {
 	 * texto (textarea)
 	 * submit (le bouton submit)
 	 * answer (hidden)
-	 * /
+	 */
 	function __construct($cond = null) {
 	
 	
