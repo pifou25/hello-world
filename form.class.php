@@ -2,8 +2,8 @@
 
 /**
  * formulaire dynamique + protection antispam
- * ajout d'un champ caché 'salt' (hash) avec une valeur à vérifier
- * ajout d'un textarea caché qui doit rester vide
+ * ajout d'un champ cachÃ© 'salt' (hash) avec une valeur Ã  vÃ©rifier
+ * ajout d'un textarea cachÃ© qui doit rester vide
  * les noms des champs sont dynamiques
  */
 class form {
@@ -21,12 +21,12 @@ class form {
 	protected $fields = array(); 
 	
 	/**
-	 * valeur des champs à récupérer dans $_POST
+	 * valeur des champs Ã  rÃ©cupÃ©rer dans $_POST
 	 */
 	protected $values = array();
 	
 	/**
-	 * nom des champs cryptés
+	 * nom des champs cryptÃ©s
 	 */
 	protected $names = array();
 	
@@ -35,12 +35,12 @@ class form {
 	 */
 	protected $valide = false;
 	/**
-	 * si la validation a été faite ?
+	 * si la validation a Ã©tÃ© faite ?
 	 */
 	protected $check = false;
 	
 	/**
-	 * la clé de cryptage du formulaire
+	 * la clÃ© de cryptage du formulaire
 	 */
 	protected $token;
 
@@ -48,19 +48,21 @@ class form {
 	protected $debug = false;
 	
 	/**
-	 * message d'erreur : en cas d'échec de validation
+	 * message d'erreur : en cas d'Ã©chec de validation
 	 */
 	protected $err;
 
-	
+	/**
+	 * un seul champ par dÃ©faut : le message qui est un textarea
+	 */
 	function __construct($cond = null)  {
 	
-		// champs supplémentaires si paramétré
+		// champs supplÃ©mentaires si paramÃ©trÃ©
 		if(!empty($cond))
 			foreach($cond as $key => $field)
 				$this->fields[$key] = $field;
 
-		// ajouter le message caché
+		// ajouter le message cachÃ©
 		$this->fields['message'] = array('type'=>'textarea', 'name'=>'message', 'value'=>'',
 			'label'=>array('style'=>'display:block;position:absolute;left:-9999px', 'txt'=>'Laisser cette zone vide.'));
 	
@@ -69,7 +71,7 @@ class form {
 	}
 	
 	/**
-	 * générer le token, crypter les champs et rendre le formulaire
+	 * gÃ©nÃ©rer le token, crypter les champs et rendre le formulaire
 	 */
 	public function getForm() {
 
@@ -101,11 +103,11 @@ class form {
 	
 		if ($this->check == false && !empty($_POST) && !empty($_POST['token'])) {
 
-			// on récupere le token
+			// on rÃ©cupere le token
 			$token = $_POST['token'];
 			list($when,$this->token) = explode('#',$token,2);
 			if($when<(time()-30*60)) {
-				$this->err = "Timeout ! 30 minutes maximum pour répondre.";
+				$this->err = "Timeout ! 30 minutes maximum pour rÃ©pondre.";
 				return false;
 			}
 			else if ($this->token!==sha1(self::SALT.$when.self::SALT)) {
@@ -115,13 +117,13 @@ class form {
 
 			$fn = $this->fieldname('message');
 			if (!empty($_POST[$fn])) {
-				$this->err = "Message détecté (spam) ! Formulaire invalide.";
+				$this->err = "Message dÃ©tectÃ© (spam) ! Formulaire invalide.";
 				return false;
 			}
 
 			$this->valide = true;
 			
-			// décrypter les noms des champs
+			// dÃ©crypter les noms des champs
 			foreach($this->fields as $key => $value) {
 				$this->names[$key] = $this->fieldname($key);
 				$this->values[$key] = $_POST[$this->names[$key]];
@@ -139,7 +141,7 @@ class form {
 	}
 
 	/**
-	 * surcharge magique pour lire un résultat du formulaire. sans "protection"
+	 * surcharge magique pour lire un rÃ©sultat du formulaire. sans "protection"
 	 */
 	public function __get($name) {
 
@@ -187,7 +189,7 @@ class form {
 	
 	
 	/**
-	 * surcharge magique pour écrire le formulaire
+	 * surcharge magique pour Ã©crire le formulaire
 	 */
 	public function __toString() {
 		return $this->getForm();
@@ -208,7 +210,7 @@ class form {
 	}
 	
 	/**
-	 * initialiser des valeurs par défaut du formulaire
+	 * initialiser des valeurs par dÃ©faut du formulaire
 	 */
 	public function setValues($values) {
 	
@@ -218,7 +220,7 @@ class form {
 		}
 	}
 
-	public function getError() { // msg de la dernière erreur
+	public function getError() { // msg de la derniÃ¨re erreur
 		return $this->err;
 	}
 	
@@ -230,12 +232,12 @@ class form {
 	
 	/**
 	 * un array contient tous les attributs du champs
-	 * getField permet de générer le tag <input ... />
-	 * @param $field est un élément de $this->fields
+	 * getField permet de gÃ©nÃ©rer le tag <input ... />
+	 * @param $field est un Ã©lÃ©ment de $this->fields
 	 * @return la balise HTML <input ... />
 	 */
 	static protected function getField($field) {
-		// on gère le label
+		// on gÃ¨re le label
 		if(isset($field['label'])) {
 			$label = $field['label'];
 			unset($field['label']);
@@ -246,18 +248,18 @@ class form {
 		$default = isset($field['value']) ? $field['value'] : '';
 		unset($field['value']);
 		
-		// préparer le champ
+		// prÃ©parer le champ
 		foreach($field as $key => $value)
 			$ret .= sprintf(' %s="%s"', $key, $value);
 		
-		// générer la balise input - ou textarea
+		// gÃ©nÃ©rer la balise input - ou textarea
 		if($type == 'textarea') {
 			$ret = "<$type $ret>$default</$type>";
 		}else{
 			$ret = sprintf('<input type="%s" %s value="%s" />', $type, $ret, $default);
 		}
 		
-		// générer le label entourant la balise
+		// gÃ©nÃ©rer le label entourant la balise
 		if(isset($label)) {
 			$txt = isset($label['txt']) ? $label['txt'] : '';
 			unset($label['txt']);
